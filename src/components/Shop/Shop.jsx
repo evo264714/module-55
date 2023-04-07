@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { addToDb, getShoppingCart } from '../../utilities/fakedb';
+import { addToDb, deleteShoppingCart, getShoppingCart } from '../../utilities/fakedb';
 import Cart from '../Cart/Cart';
 import Product from '../Product/Product';
 import './Shop.css';
+import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faShoppingCart } from '@fortawesome/free-solid-svg-icons'
 
 const Shop = () => {
     const [products, setProducts] = useState([]);
@@ -24,17 +27,17 @@ const Shop = () => {
             //* Step 2: Get the product by using id
             const addedProduct = products.find(product => product.id === id);
             if (addedProduct) {
-            //* Step 3: Get quantity of the product
+                //* Step 3: Get quantity of the product
                 const quantity = storedCart[id];
                 addedProduct.quantity = quantity
 
-            //* Step 4: add the addedProduct to the saved cart    
+                //* Step 4: add the addedProduct to the saved cart    
                 savedCart.push(addedProduct);
             }
         }
 
-            //* Step 5: Set the cart
-                setCart(savedCart);
+        //* Step 5: Set the cart
+        setCart(savedCart);
     }, [products])
 
     const handleAddToCart = (product) => {
@@ -43,11 +46,11 @@ const Shop = () => {
         //* if product doesnt exist in the cart then set quantity = 1
         //* If exists update quantity by 1
         const exists = cart.find(pd => pd.id === product.id);
-        if(!exists){
+        if (!exists) {
             product.quantity = 1;
             newCart = [...cart, product]
         }
-        else{
+        else {
             exists.quantity = exists.quantity + 1;
             const remaining = cart.filter(pd => pd.id !== product.id)
             newCart = [...remaining, exists];
@@ -55,6 +58,11 @@ const Shop = () => {
 
         setCart(newCart);
         addToDb(product.id)
+    }
+
+    const handleClearCart = () => {
+        setCart([]);
+        deleteShoppingCart();
     }
 
     return (
@@ -67,7 +75,14 @@ const Shop = () => {
                 ></Product>)}
             </div>
             <div className="cart-container">
-                <Cart cart={cart}></Cart>
+                <Cart
+                    cart={cart}
+                    handleClearCart={handleClearCart}
+                >
+                    <Link className='proceed-link' to='./orders'>
+                        <button className='btn-proceed'>Review Order <FontAwesomeIcon icon={faShoppingCart} /></button>
+                    </Link>
+                </Cart>
             </div>
         </div>
     );
