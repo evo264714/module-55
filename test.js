@@ -3,5 +3,5 @@ const items= [
     { id:"B333" , name : "tea" },
     { id:"C555", name : "juice"}
   ]
-const  item= items.filter(item => item.id != "C555" )
+const  item= items.filter(item => item._id != "C555" )
 console.log(item);
